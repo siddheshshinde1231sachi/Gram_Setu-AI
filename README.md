@@ -104,25 +104,37 @@ The platform is **source-backed, evidence-based, politically neutral, accessible
 
 ```text
 gram-setu/
-├── index.html                 # Complete Single Page Application entry point
-├── app.css                    # Design system, themes, high contrast, typography
-├── manifest.json              # PWA manifest
-├── sw.js                      # Offline caching service worker
-├── data/
-│   └── villageData.js         # Comprehensive fictional dataset for Sonwadi, Nashik
-├── js/
-│   ├── i18n.js                # Marathi (Primary), Hindi, English translations
-│   ├── state.js               # Reactive state manager, local storage persistence
-│   ├── ai-assistant.js        # GramSetu Mitra grounded AI engine & voice TTS
-│   └── components.js          # Full UI views & modal renderers
-├── prisma/
-│   └── schema.prisma          # PostgreSQL enterprise schema (21 models)
-├── lib/
-│   ├── validation/
-│   │   └── schemas.ts         # Zod schemas for all inputs & entities
-│   └── ai/
-│       └── gemini.ts          # Server-side Gemini AI provider architecture
-└── .env.example               # Environment variables template
+├── frontend/                          # Client-Side Application (HTML, CSS, JS, PWA)
+│   ├── index.html                     # Complete Single Page Application UI
+│   ├── app.css                        # Design system, themes, high contrast, typography
+│   ├── manifest.json                  # PWA manifest
+│   ├── sw.js                          # Offline caching service worker
+│   ├── data/
+│   │   ├── maharashtraLocations.js    # All 36 Districts & Talukas geospatial database
+│   │   └── villageData.js             # Comprehensive dataset for Sonwadi, Nashik
+│   └── js/
+│       ├── i18n.js                    # Marathi (Primary), Hindi, English translations
+│       ├── state.js                   # Reactive state manager, local storage persistence
+│       ├── ai-assistant.js            # GramSetu Mitra grounded AI engine & voice TTS
+│       └── components.js              # Full UI views, modals & real-time updates
+│
+├── backend/                           # Server-Side Services & Database Architecture
+│   ├── package.json                   # Backend server dependencies & npm scripts
+│   ├── server.js                      # Express API gateway (AI gateway, complaints API)
+│   ├── .env.example                   # Backend environment template
+│   ├── prisma/
+│   │   └── schema.prisma              # PostgreSQL enterprise schema (21 models)
+│   └── lib/
+│       ├── validation/
+│       │   └── schemas.ts             # Zod validation schemas for all inputs & entities
+│       └── ai/
+│           └── gemini.ts              # Server-side Gemini AI provider architecture
+│
+├── index.html                         # Root quick launcher / auto-redirect to frontend/
+├── .env                               # Local secrets (strictly gitignored)
+├── .env.example                       # Root environment template
+├── .gitignore                         # Comprehensive ignore rules
+└── README.md                          # Documentation
 ```
 
 ---
@@ -130,20 +142,26 @@ gram-setu/
 ## 🏃 How to Run Locally
 
 ### Option 1: Instant Browser Launch (Zero Dependencies)
-Simply double-click `index.html` or open it in any modern web browser:
+Simply double-click `index.html` at the project root or open `frontend/index.html` directly in any modern web browser:
 ```text
 file:///c:/Users/Admin/Desktop/gram%20setu/index.html
 ```
 
 ### Option 2: Using Any Local Web Server
 ```bash
-# If using Python:
-python -m http.server 3000
-
-# Or if using npx serve:
-npx serve .
+# Serve frontend directly:
+npx serve frontend
+# Or with Python:
+cd frontend && python -m http.server 3000
 ```
 Then navigate to `http://localhost:3000`.
+
+### Option 3: Running Backend API Server
+```bash
+cd backend
+npm install
+npm run dev
+```
 
 ---
 
@@ -163,3 +181,4 @@ Navigate to **प्रशासकीय कक्ष (Admin Portal)** or use t
 * ग्रामसेतू मंच कोणत्याही राजकीय पक्षाशी संबंधित नाही. ही प्रणाली केवळ अधिकृत शासकीय व ग्रामपंचायत दस्तऐवजांच्या आधारे माहिती सादर करते.
 # gram-setu_1
 # tred
+# Gram_Setu-AI
