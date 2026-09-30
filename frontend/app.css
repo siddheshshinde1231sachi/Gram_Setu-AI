@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --font-primary: 'Noto Sans Devanagari', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Outfit', 'Noto Sans Devanagari', sans-serif;
+  
+  --primary-950: #022c22;
+  --primary-900: #064e3b; /* Bottle Green */
+  --primary-800: #065f46;
+  --primary-700: #047857;
+  --primary-600: #059669;
+  --primary-500: #10b981;
+  --primary-200: #a7f3d0;
+  --primary-100: #d1fae5;
+  --primary-50: #ecfdf5;
+
+  --accent-600: #059669;
+  --accent-500: #10b981;
+  --accent-100: #d1fae5;
+  --accent-50: #ecfdf5;
+
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+}
+
+/* Accessibility: Text Size Scaling */
+html.text-size-normal { font-size: 16px; }
+html.text-size-large { font-size: 18px; }
+html.text-size-xlarge { font-size: 21px; }
+
+/* Accessibility: High Contrast Mode */
+html.high-contrast-mode {
+  --bg-main: #000000 !important;
+  --bg-card: #121212 !important;
+  --text-main: #ffffff !important;
+  --text-muted: #e2e8f0 !important;
+  --border-color: #facc15 !important;
+  --primary-800: #fbbf24 !important;
+  --primary-50: #1f2937 !important;
+}
+
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .bg-white,
+html.high-contrast-mode .bg-slate-50,
+html.high-contrast-mode .bg-slate-100 {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+  border-color: #fbbf24 !important;
+}
+
+html.high-contrast-mode .text-slate-900,
+html.high-contrast-mode .text-slate-800,
+html.high-contrast-mode .text-slate-700 {
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .text-slate-600,
+html.high-contrast-mode .text-slate-500 {
+  color: #e2e8f0 !important;
+}
+
+/* Low Data Mode */
+html.low-data-mode img:not(.keep-in-low-data) {
+  display: none !important;
+}
+
+html.low-data-mode .shadow-lg,
+html.low-data-mode .shadow-xl,
+html.low-data-mode .shadow-2xl {
+  box-shadow: none !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html.low-data-mode * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Base Body & Cross-Platform Responsive Standards */
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  min-height: 100dvh; /* Android & iOS dynamic address bar support */
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Eliminate 300ms tap delay on mobile touchscreens */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Prevent auto-zoom on iOS Safari when focusing form fields */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Smooth momentum scrolling for mobile devices */
+.overflow-y-auto, .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* Accessible visible focus states */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #059669 !important;
+  outline-offset: 2px !important;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Pulse badge */
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.pulse-indicator {
+  animation: pulse-dot 2s infinite;
+}
+
+/* Verification Status Badges */
+.badge-official {
+  background-color: #ecfdf5;
+  color: #064e3b;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-document {
+  background-color: #f0fdf4;
+  color: #065f46;
+  border: 1px solid #bbf7d0;
+}
+
+.badge-pending {
+  background-color: #f0fdf4;
+  color: #047857;
+  border: 1px solid #86efac;
+}
+
+.badge-unavailable {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+/* Leaflet container */
+#village-map-container {
+  height: 520px;
+  width: 100%;
+  border-radius: 0.75rem;
+  z-index: 10;
+}
+
+/* Modal Overlay */
+.modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}

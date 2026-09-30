@@ -1,0 +1,33 @@
+{
+  "name": "gramsetu-backend",
+  "version": "1.0.0",
+  "description": "GramSetu Platform Backend Services (Prisma ORM, Google Gemini AI, Validation & API)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:studio": "npx prisma studio",
+    "migrate": "node ../scripts/migrate.js"
+  },
+  "keywords": [
+    "gramsetu",
+    "panchayat",
+    "civic-tech",
+    "prisma",
+    "gemini-ai"
+  ],
+  "author": "GramSetu Team",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}

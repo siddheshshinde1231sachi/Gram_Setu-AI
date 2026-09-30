@@ -1,0 +1,13 @@
+{
+  "name": "gram-setu",
+  "version": "1.0.0",
+  "description": "GramSetu — Digital Village Governance & Transparency Platform",
+  "scripts": {
+    "migrate": "node scripts/migrate.js",
+    "migrate:py": "python scripts/migrate.py",
+    "server": "python -m http.server 3000"
+  },
+  "keywords": ["gramsetu", "panchayat", "supabase", "civic-tech"],
+  "author": "GramSetu Team",
+  "license": "ISC"
+}

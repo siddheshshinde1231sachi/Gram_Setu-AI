@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="mr" class="text-size-normal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>GramSetu — डिजिटल ग्राम माहिती, पारदर्शकता व नागरिक सेवा मंच (सोनवाडी, नाशिक)</title>
+  <meta name="description" content="आपल्या गावाची माहिती, आपल्या हातात. गावातील विकासकामे, खर्च, शासकीय योजना, सुविधा आणि तक्रार निवारण पारदर्शक मंच.">
+  <meta name="theme-color" content="#064e3b">
+  
+  <!-- Mobile & macOS / iOS PWA Configuration -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GramSetu">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Social Sharing / Messaging Previews (WhatsApp, iMessage, Telegram) -->
+  <meta property="og:title" content="GramSetu — डिजिटल ग्राम मंच">
+  <meta property="og:description" content="आपल्या गावाची माहिती, आपल्या हातात. विकासकामे, खर्च, योजना व तक्रार निवारण.">
+  <meta property="og:type" content="website">
+
+  <!-- Vector Favicon for Desktop, Android & macOS (Bottle Green & White) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23064e3b'/><text x='50%' y='68%' font-size='55' font-weight='bold' fill='%23ffffff' text-anchor='middle'>ग</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23064e3b'/><text x='50%' y='68%' font-size='55' font-weight='bold' fill='%23ffffff' text-anchor='middle'>ग</text></svg>">
+  <link rel="manifest" href="./frontend/manifest.json">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bottlegreen: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            civic: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            // Remap blue palette to authentic Bottle Green tones
+            blue: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              300: '#6ee7b7',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            indigo: {
+              800: '#065f46',
+              900: '#064e3b',
+              950: '#022c22'
+            },
+            // Remap amber / saffron / orange to rich bottle green & crisp highlights
+            amber: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#34d399',
+              500: '#047857',
+              600: '#065f46',
+              700: '#064e3b',
+              800: '#022c22',
+              900: '#022c22',
+              950: '#011a14'
+            },
+            saffron: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#047857',
+              600: '#064e3b'
+            },
+            orange: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#047857',
+              600: '#064e3b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Custom Stylesheet from frontend/ -->
+  <link rel="stylesheet" href="./frontend/app.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-800 selection:text-white min-h-screen flex flex-col justify-between">
+
+  <!-- Root Application Container -->
+  <div id="app-root" class="min-h-screen flex flex-col justify-between">
+    <!-- Rendered dynamically by components.js -->
+    <div class="p-12 text-center text-slate-500 font-bold">
+      ग्रामसेतू मंच सुरू होत आहे...
+    </div>
+  </div>
+
+  <!-- Application Logic Modules from frontend/ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./frontend/js/supabase-client.js"></script>
+  <script src="./frontend/data/maharashtraLocations.js"></script>
+  <script src="./frontend/data/villageData.js"></script>
+  <script src="./frontend/js/i18n.js"></script>
+  <script src="./frontend/js/state.js"></script>
+  <script src="./frontend/js/ai-assistant.js"></script>
+  <script src="./frontend/js/components.js"></script>
+
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./frontend/sw.js').then((reg) => {
+          console.log('GramSetu ServiceWorker registered:', reg.scope);
+        }).catch((err) => {
+          console.log('GramSetu ServiceWorker failed:', err);
+        });
+      });
+    }
+
+    // Subscribe State changes to re-render components automatically
+    window.appState.subscribe(() => {
+      window.components.render();
+    });
+
+    // Initial App Render
+    document.addEventListener('DOMContentLoaded', () => {
+      window.components.render();
+    });
+  </script>
+</body>
+</html>

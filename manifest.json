@@ -1,0 +1,31 @@
+{
+  "name": "GramSetu — डिजिटल ग्राम माहिती व पारदर्शकता मंच",
+  "short_name": "GramSetu",
+  "description": "आपल्या गावाची माहिती, आपल्या हातात. विकासकामे, खर्च, योजना व तक्रार निवारण मंच.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFFFF",
+  "theme_color": "#064E3B",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

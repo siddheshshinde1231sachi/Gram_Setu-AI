@@ -1,0 +1,478 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CITIZEN
+  MODERATOR
+  VILLAGE_ADMIN
+  SUPER_ADMIN
+}
+
+enum VerificationStatus {
+  OFFICIAL_SOURCE
+  GOVERNMENT_DOCUMENT
+  COMMUNITY_PENDING
+  UNAVAILABLE
+}
+
+enum WorkStatus {
+  PROPOSED
+  APPROVED
+  SANCTIONED
+  WORK_STARTED
+  IN_PROGRESS
+  INSPECTION
+  COMPLETED
+}
+
+enum ComplaintStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+enum QuestionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ANSWERED
+  CLOSED
+}
+
+enum NotificationCategory {
+  GRAM_SABHA
+  WATER
+  DEVELOPMENT
+  HEALTH
+  GOVERNMENT
+  EMERGENCY
+  PANCHAYAT
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String?   @unique
+  phone         String?   @unique
+  passwordHash  String
+  role          Role      @default(CITIZEN)
+  villageId     String?
+  village       Village?  @relation(fields: [villageId], references: [id])
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  complaints    Complaint[]
+  questions     PublicQuestion[]
+  auditLogs     AuditLog[]
+  submissions   CommunitySubmission[]
+
+  @@map("users")
+}
+
+model Village {
+  id          String   @id @default(uuid())
+  name        String
+  nameMr      String
+  nameHi      String
+  state       String   @default("Maharashtra")
+  district    String
+  taluka      String
+  pinCode     String
+  population  Int
+  households  Int
+  area        Float    // in hectares
+  latitude    Float
+  longitude   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users              User[]
+  gramPanchayats     GramPanchayat[]
+  developmentWorks   DevelopmentWork[]
+  budgets            Budget[]
+  documents          Document[]
+  facilities         Facility[]
+  complaints         Complaint[]
+  questions          PublicQuestion[]
+  gramSabhaMeetings  GramSabhaMeeting[]
+  notifications      Notification[]
+  mapLocations       MapLocation[]
+  submissions        CommunitySubmission[]
+  metrics            InformationMetric[]
+
+  @@map("villages")
+}
+
+model GramPanchayat {
+  id          String   @id @default(uuid())
+  villageId   String
+  village     Village  @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  name        String
+  address     String
+  publicPhone String
+  sarpanchName String?
+  gramSevakName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("gram_panchayats")
+}
+
+model DevelopmentWork {
+  id                     String             @id @default(uuid())
+  villageId              String
+  village                Village            @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  workId                 String             @unique // e.g. WRK-2025-089
+  title                  String
+  titleMr                String?
+  description            String
+  category               String             // Roads, Water, Drainage, Street Lights, Buildings, etc.
+  department             String             // Rural Development, PWD, Jal Jeevan Mission, etc.
+  scheme                 String?
+  location               String
+  latitude               Float?
+  longitude              Float?
+  status                 WorkStatus         @default(PROPOSED)
+  sanctionDate           DateTime?
+  expectedCompletionDate DateTime?
+  actualCompletionDate   DateTime?
+  estimatedCost          Decimal            @db.Decimal(12, 2)
+  sanctionedAmount       Decimal            @db.Decimal(12, 2)
+  releasedAmount         Decimal            @db.Decimal(12, 2)
+  spentAmount            Decimal            @db.Decimal(12, 2)
+  contractorName         String?
+  sourceDocumentId       String?
+  verificationStatus     VerificationStatus @default(OFFICIAL_SOURCE)
+  createdBy              String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  updates                WorkUpdate[]
+  photos                 WorkPhoto[]
+
+  @@map("development_works")
+}
+
+model WorkUpdate {
+  id                 String             @id @default(uuid())
+  workId             String
+  work               DevelopmentWork    @relation(fields: [workId], references: [id], onDelete: Cascade)
+  title              String
+  description        String
+  status             WorkStatus
+  eventDate          DateTime
+  sourceDocumentId   String?
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdBy          String?
+  createdAt          DateTime           @default(now())
+
+  @@map("work_updates")
+}
+
+model WorkPhoto {
+  id                 String             @id @default(uuid())
+  workId             String
+  work               DevelopmentWork    @relation(fields: [workId], references: [id], onDelete: Cascade)
+  photoType          String             // BEFORE, DURING, AFTER
+  fileUrl            String
+  thumbnailUrl       String?
+  photoDate          DateTime           @default(now())
+  location           String?
+  uploadedBy         String?
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdAt          DateTime           @default(now())
+
+  @@map("work_photos")
+}
+
+model Budget {
+  id                 String             @id @default(uuid())
+  villageId          String
+  village            Village            @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  financialYear      String             // e.g. 2025-2026
+  sanctionedAmount   Decimal            @db.Decimal(14, 2)
+  receivedAmount     Decimal            @db.Decimal(14, 2)
+  spentAmount        Decimal            @db.Decimal(14, 2)
+  remainingAmount    Decimal            @db.Decimal(14, 2)
+  sourceDocumentId   String?
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  expenses           Expense[]
+
+  @@unique([villageId, financialYear])
+  @@map("budgets")
+}
+
+model Expense {
+  id                 String             @id @default(uuid())
+  budgetId           String
+  budget             Budget             @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category           String             // Roads, Water, Sanitation, Street Lights, Education, etc.
+  description        String
+  amount             Decimal            @db.Decimal(12, 2)
+  expenseDate        DateTime
+  sourceDocumentId   String?
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("expenses")
+}
+
+model Document {
+  id                 String             @id @default(uuid())
+  villageId          String
+  village            Village            @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  name               String
+  category           String             // Budget, Works, Notices, Minutes, Gram Sabha, Tenders, Work Orders
+  description        String?
+  fileUrl            String
+  mimeType           String             @default("application/pdf")
+  fileSize           Int                // in bytes
+  documentDate       DateTime
+  source             String             // e.g. Gram Panchayat Sonwadi Office / ZP Nashik
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  uploadedBy         String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("documents")
+}
+
+model Facility {
+  id                 String             @id @default(uuid())
+  villageId          String
+  village            Village            @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  name               String
+  nameMr             String?
+  category           String             // Health, School, Water, Bank, Post Office, Police, Agriculture
+  address            String
+  publicPhone        String?
+  openingHours       String?
+  services           String[]
+  latitude           Float?
+  longitude          Float?
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("facilities")
+}
+
+model GovernmentScheme {
+  id                 String             @id @default(uuid())
+  name               String
+  nameMr             String
+  nameHi             String
+  category           String             // Farmer, Student, Women, Senior Citizens, Disability, Housing, Health
+  description        String
+  eligibility        String
+  benefits           String
+  requiredDocuments  String[]
+  applicationProcess String
+  officialUrl        String
+  department         String
+  deadline           String?
+  lastVerified       DateTime           @default(now())
+  verificationStatus VerificationStatus @default(OFFICIAL_SOURCE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@map("government_schemes")
+}
+
+model Complaint {
+  id           String          @id @default(uuid())
+  trackingId   String          @unique // e.g. GRM-2026-004821
+  villageId    String
+  village      Village         @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  category     String          // Road, Water, Electricity, Drainage, Garbage, School
+  description  String
+  location     String
+  latitude     Float?
+  longitude    Float?
+  photoUrl     String?
+  isAnonymous  Boolean         @default(false)
+  citizenName  String?
+  citizenPhone String?
+  status       ComplaintStatus @default(SUBMITTED)
+  createdById  String?
+  createdBy    User?           @relation(fields: [createdById], references: [id])
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  updates      ComplaintUpdate[]
+
+  @@map("complaints")
+}
+
+model ComplaintUpdate {
+  id          String          @id @default(uuid())
+  complaintId String
+  complaint   Complaint       @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  status      ComplaintStatus
+  message     String
+  createdBy   String?
+  createdAt   DateTime        @default(now())
+
+  @@map("complaint_updates")
+}
+
+model PublicQuestion {
+  id                   String         @id @default(uuid())
+  questionId           String         @unique // e.g. QST-2026-0104
+  villageId            String
+  village              Village        @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  question             String
+  category             String
+  status               QuestionStatus @default(SUBMITTED)
+  officialResponse     String?
+  responseDate         DateTime?
+  supportingDocumentId String?
+  createdById          String?
+  createdBy            User?          @relation(fields: [createdById], references: [id])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  @@map("public_questions")
+}
+
+model GramSabhaMeeting {
+  id                String    @id @default(uuid())
+  villageId         String
+  village           Village   @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  meetingDate       DateTime
+  time              String
+  venue             String
+  agenda            String[]
+  minutesDocumentId String?
+  resolutions       String[]
+  status            String    // UPCOMING, COMPLETED, CANCELLED
+  attendeesCount    Int?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("gram_sabha_meetings")
+}
+
+model Notification {
+  id          String               @id @default(uuid())
+  villageId   String
+  village     Village              @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  title       String
+  titleMr     String?
+  content     String
+  category    NotificationCategory @default(PANCHAYAT)
+  status      String               @default("PUBLISHED") // DRAFT, PUBLISHED, EXPIRED
+  publishedAt DateTime             @default(now())
+  expiresAt   DateTime?
+  createdBy   String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@map("notifications")
+}
+
+model MapLocation {
+  id          String   @id @default(uuid())
+  villageId   String
+  village     Village  @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  type        String   // WORK, FACILITY, ROAD, WATER, HEALTH
+  referenceId String?
+  latitude    Float
+  longitude   Float
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("map_locations")
+}
+
+model VerificationRecord {
+  id          String             @id @default(uuid())
+  entityType  String             // WORK, BUDGET, DOCUMENT, FACILITY
+  entityId    String
+  status      VerificationStatus
+  source      String
+  notes       String?
+  verifiedBy  String?
+  verifiedAt  DateTime           @default(now())
+  createdAt   DateTime           @default(now())
+
+  @@map("verification_records")
+}
+
+model CommunitySubmission {
+  id           String             @id @default(uuid())
+  villageId    String
+  village      Village            @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  type         String             // MISSING_FACILITY, MISSING_WORK, CORRECTION, PUBLIC_DOC
+  title        String
+  description  String
+  evidenceUrl  String?
+  status       VerificationStatus @default(COMMUNITY_PENDING)
+  submittedById String?
+  submittedBy  User?              @relation(fields: [submittedById], references: [id])
+  reviewedBy   String?
+  reviewNotes  String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@map("community_submissions")
+}
+
+model InformationMetric {
+  id                     String   @id @default(uuid())
+  villageId              String
+  village                Village  @relation(fields: [villageId], references: [id], onDelete: Cascade)
+  category               String   // Development, Financial, Facilities, Gram Sabha
+  requiredFields         Int
+  availableFields        Int
+  availabilityPercentage Float
+  calculatedAt           DateTime @default(now())
+
+  @@map("information_metrics")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  actorId       String?
+  actor         User?    @relation(fields: [actorId], references: [id])
+  actorName     String?
+  entityType    String   // WORK, BUDGET, COMPLAINT, DOCUMENT, NOTIFICATION
+  entityId      String
+  action        String   // CREATE, UPDATE, DELETE, VERIFY, STATUS_CHANGE
+  previousValue Json?
+  newValue      Json?
+  reason        String
+  ipHash        String?
+  createdAt     DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model RecordVersion {
+  id            String   @id @default(uuid())
+  entityType    String   // WORK, BUDGET, EXPENSE
+  entityId      String
+  versionNumber Int
+  snapshot      Json
+  changedBy     String?
+  changeReason  String
+  createdAt     DateTime @default(now())
+
+  @@unique([entityType, entityId, versionNumber])
+  @@map("record_versions")
+}
