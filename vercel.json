@@ -1,15 +1,7 @@
 {
   "version": 2,
+  "framework": null,
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/frontend/index.html" },
-    { "source": "/sw.js", "destination": "/frontend/sw.js" },
-    { "source": "/manifest.json", "destination": "/frontend/manifest.json" },
-    { "source": "/icon.svg", "destination": "/frontend/icon.svg" },
-    { "source": "/app.css", "destination": "/frontend/app.css" },
-    { "source": "/js/(.*)", "destination": "/frontend/js/$1" },
-    { "source": "/data/(.*)", "destination": "/frontend/data/$1" }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -21,7 +13,7 @@
       ]
     },
     {
-      "source": "/frontend/sw.js",
+      "source": "/sw.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
         { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
@@ -29,7 +21,7 @@
       ]
     },
     {
-      "source": "/sw.js",
+      "source": "/frontend/sw.js",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
         { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
