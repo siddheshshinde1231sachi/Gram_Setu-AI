@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "GramSetu — Digital Village Governance & Transparency Platform",
   "scripts": {
+    "build": "echo 'GramSetu build ready'",
     "migrate": "node scripts/migrate.js",
     "migrate:py": "python scripts/migrate.py",
     "server": "python -m http.server 3000"

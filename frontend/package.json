@@ -1,0 +1,11 @@
+{
+  "name": "gram-setu-frontend",
+  "version": "1.0.0",
+  "description": "GramSetu Frontend - Digital Village Transparency Platform",
+  "scripts": {
+    "build": "echo 'Frontend ready'"
+  },
+  "keywords": ["gramsetu", "frontend"],
+  "author": "GramSetu Team",
+  "license": "ISC"
+}
